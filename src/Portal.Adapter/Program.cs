@@ -1,5 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // <-- use your actual frontend origin!
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PortalDbContext>(o =>
@@ -9,6 +20,11 @@ builder.Services.AddDbContext<PortalDbContext>(o =>
     )
 );
 var app = builder.Build();
+
+
+
+app.UseCors("AllowFrontend");
+
 // Ensure database and tables exist (quick-start dev convenience)
 using (var scope = app.Services.CreateScope())
 {

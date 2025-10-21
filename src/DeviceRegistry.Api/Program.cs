@@ -2,11 +2,27 @@ using Microsoft.EntityFrameworkCore;
 using Innovia.Shared.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactDev", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddDbContext<InnoviaDbContext>(o => 
     o.UseNpgsql(builder.Configuration.GetConnectionString("Db")));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var app = builder.Build();
+
+
+
+
+app.UseCors("AllowReactDev");
 
 // Ensure database and tables exist (quick-start dev convenience)
 using (var scope = app.Services.CreateScope())
@@ -22,6 +38,8 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "DeviceRegistry.Api v1");
     c.RoutePrefix = "swagger";
 });
+
+
 // Redirect root to Swagger UI for convenience
 app.MapGet("/", () => Results.Redirect("/swagger"));
 

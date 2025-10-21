@@ -10,6 +10,17 @@ using MQTTnet.Protocol;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // change to your frontend origin!
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Trim noisy logs: hide EF Core SQL and HttpClient chatter
 builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
 builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database", LogLevel.Warning);
@@ -56,6 +67,8 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<IngestDbContext>();
     db.Database.EnsureCreated();
 }
+
+app.UseCors("AllowFrontend");
 
 // Enable Swagger always (not only in Development)
 app.UseSwagger();
