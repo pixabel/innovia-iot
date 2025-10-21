@@ -23,21 +23,21 @@ catch (Exception ex)
 }
 
 var rand = new Random();
-string tenantId = "ffdc3cc6-4bb5-41cc-a403-80cc927c43ab";
+string tenantSlug = "innovia";
 
 //  Lista med alla devices
 var devices = new[]
 {
-    new { Id = "3fa85f64-5717-4562-b3fc-2c963f66afa6", ApiKey = "dev-101-key" },
-    new { Id = "9a84e956-560d-4530-9d0c-c95d5d2ec1eb", ApiKey = "dev-102-key" },
-    new { Id = "e2f6d83b-a61b-4766-9832-d954244549b8", ApiKey = "dev-103-key" },
-    new { Id = "516796e3-6304-42d2-adb4-ff1d8b480d70", ApiKey = "dev-104-key" },
-    new { Id = "0a6c18bb-7cc3-4a0c-a481-157aa43534d1", ApiKey = "dev-105-key" },
-    new { Id = "afd73d89-5053-4f0a-b94f-df05b9289da0", ApiKey = "dev-106-key" },
-    new { Id = "6b449f07-f6f5-47b9-b562-823210f857fe", ApiKey = "dev-107-key" },
-    new { Id = "2f6ba951-7c58-4f9d-af58-1cb9b45d07a8", ApiKey = "dev-108-key" },
-    new { Id = "893a209f-0f06-444b-a647-c96b349bb1fa", ApiKey = "dev-109-key" },
-    new { Id = "874a438b-c88a-470c-8607-79881dfb0297", ApiKey = "dev-110-key" }
+    new { Serial = "dev-101", ApiKey = "dev-101-key" },
+    new { Serial = "dev-102", ApiKey = "dev-102-key" },
+    new { Serial = "dev-103", ApiKey = "dev-103-key" },
+    new { Serial = "dev-104", ApiKey = "dev-104-key" },
+    new { Serial = "dev-105", ApiKey = "dev-105-key" },
+    new { Serial = "dev-106", ApiKey = "dev-106-key" },
+    new { Serial = "dev-107", ApiKey = "dev-107-key" },
+    new { Serial = "dev-108", ApiKey = "dev-108-key" },
+    new { Serial = "dev-109", ApiKey = "dev-109-key" },
+    new { Serial = "dev-110", ApiKey = "dev-110-key" }
 };
 
 
@@ -48,7 +48,7 @@ while (true)
     {
         var payload = new
         {
-            deviceId = device.Id,
+            deviceId = device.Serial, // <- SERIAL, not GUID
             apiKey = device.ApiKey,
             timestamp = DateTimeOffset.UtcNow,
             metrics = new object[]
@@ -58,7 +58,7 @@ while (true)
             }
         };
 
-        var topic = $"tenants/{tenantId}/devices/{device.Id}/measurements";
+        var topic = $"tenants/{tenantSlug}/devices/{device.Serial}/measurements";
         var json = JsonSerializer.Serialize(payload);
 
         var message = new MqttApplicationMessageBuilder()
